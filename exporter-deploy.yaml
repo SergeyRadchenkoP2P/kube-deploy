@@ -17,13 +17,11 @@ spec:
     spec:
       containers:
         - name: account-exporter
-          image: "account-exporter"
-          imagePullPolicy: Always
+          image: "eu.gcr.io/p2pcloud-327512/account-exporter:latest"
           ports:
              - containerPort: 2000
         - name: staking-exporter
-          image: "staking-exporter"
-          imagePullPolicy: Always
+          image: "eu.gcr.io/p2pcloud-327512/staking-exporter:latest"
           ports:
              - containerPort: 2000
         
