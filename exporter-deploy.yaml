@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exporter-pod
+  labels:
+    app: exporter-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exporter-pod
+  template:
+    metadata:
+      labels:
+        app: exporter-pod
+    spec:
+      containers:
+        - name: account-exporter
+          image: "account-exporter"
+          imagePullPolicy: Never
+          ports:
+             - containerPort: 2000
+        - name: staking-exporter
+          image: "staking-exporter"
+          imagePullPolicy: Never
+          ports:
+             - containerPort: 2000
+        
