@@ -1,0 +1,44 @@
+steps:
+  - label: "gcp credentials"
+    command: 
+      - "gcloud auth configure-docker eu.gcr.io --quiet"
+      - "gcloud container clusters get-credentials p2pcloud-cluster --zone europe-west4-a --project p2pcloud-327512"
+    agents:
+      queue: "polkadot"
+  - label: "build docker staking exporter" 
+    command: 
+      - "docker build -t staking-exporter -f docker-staking-exporter ."
+      - "docker tag staking-exporter eu.gcr.io/p2pcloud-327512/staking-exporter"
+      - "docker push eu.gcr.io/p2pcloud-327512/staking-exporter"
+    agents:
+      queue: "polkadot"
+  - label: "build docker account exporter"
+    command: 
+      - "docker build -t account-exporter -f docker-account-exporter ."
+      - "docker tag account-exporter eu.gcr.io/p2pcloud-327512/account-exporter"
+      - "docker push eu.gcr.io/p2pcloud-327512/account-exporter"
+    agents:
+      queue: "polkadot"
+  - wait
+  - label: "delete old pod from p2p cloud k8s cluster"
+    command: "kubectl delete -f exporter-deploy.yaml"
+    agents:
+      queue: "polkadot"
+  - wait
+  - label: "create pod for  p2p cloud k8s cluster"
+    command: "kubectl apply -f exporter-deploy.yaml"
+    agents:
+      queue: "polkadot"
+  - wait
+  - command: "sleep 1m"
+    agents:
+      queue: "polkadot"
+  - wait
+  - command: "kubectl get pods"
+    agents:
+      queue: "polkadot"
+  - label: "system cleanup"
+    command: "docker system prune -a -f"
+    agents:
+      queue: "polkadot"
+    
